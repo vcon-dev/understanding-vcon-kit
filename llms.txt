@@ -33,11 +33,11 @@ Each folder under `kit/` has a README with the exact prompt for that session. `k
 
 ## How the sample files are built
 
-- Top level: `vcon` ("0.4.0"), `uuid`, `created_at`, `subject`, `parties`, `dialog`, `analysis`, `attachments`.
+- Top level: `vcon` ("0.4.0"), `uuid`, `created_at`, `subject`, `parties`, `dialog`, `analysis`, `attachments`. The privacy and network files also declare `extensions: ["lawful_basis"]`.
 - `parties[]`: one object per person, with `name` and `tel`. Everything else points at a party by its index: 0 is the caller, 1 is the agent or clerk.
 - `dialog[]`: each entry is one turn of the call, `type: "text"`, with `start`, `duration` (seconds), `parties` (index of who spoke), `mediatype: "text/plain"`, `encoding: "none"` and the words in `body`. The calls are stored as text so any assistant can read them. A production phone call would instead carry a `recording` dialog entry, with audio in `body` or at `url` plus `content_hash`.
 - `analysis[]`: empty in every file. Anything an assistant writes here is new and should say who produced it.
-- `attachments[]`: every file has a `purpose: "tags"` entry. The privacy and network files also have a `purpose: "lawful_basis"` entry whose `body` holds `lawful_basis`, `expiration`, `purpose_grants[]` (each with `purpose`, `granted`, `granted_at` and sometimes `conditions`) and `proof_mechanisms[]`, where `proof_data.dialog_reference` is the dialog index of the words that granted or refused.
+- `attachments[]`: every file has a `purpose: "tags"` entry. The privacy and network files also have a `purpose: "lawful_basis"` entry whose `body` holds `lawful_basis`, `expiration`, `purpose_grants[]` (each with `purpose`, `granted`, `granted_at` and sometimes `conditions`) and `proof_mechanisms[]`, where `proof_data.dialog_reference` is the dialog index of the words that granted or refused, plus `status_interval`.
 - `role` on parties and `originator` on dialog entries are labels this kit adds. They are not vCon core fields. Do not teach them as part of the standard.
 
 ## Roles at the table
@@ -62,7 +62,7 @@ Asks what it costs.
 
 ### Strategist
 Asks who owns it.
-- Reads: the `lawful_basis` attachment, `purpose_grants[]` with `granted` and `conditions`, `proof_mechanisms[].proof_data.dialog_reference` (the words behind each grant), `expiration`, and the `org:` tag. Also notices when a file has no lawful basis at all, as in the opener.
+- Reads, in the privacy and network files: the `lawful_basis` attachment, `purpose_grants[]` with `granted` and `conditions`, `proof_mechanisms[].proof_data.dialog_reference` (the words behind each grant), `expiration`, and the `org:` tag. Also notices when a file has no lawful basis at all, as in the opener.
 - Writes: nothing in the file. A changed decision becomes an update to the lawful basis, recorded with new proof.
 - Ignores: dialog timing, `duration`, `mediatype`.
 
@@ -76,7 +76,7 @@ The file is Priya Raman's call, `kit/network/priya-raman-2026-03-10.vcon.json`. 
 - Never needs: `analysis`, `attachments`, the meaning of the words.
 
 ### Transcriber
-- Reads: the dialog (the recording), its `start`, `duration` and `parties`. The dialog is the transcriber's input.
+- Reads: the dialog (the recording), its `start`, `duration` and `parties`. The dialog is the transcriber's input. In this file the dialog is already text, so for the role play treat it as the recording the carrier delivered. The transcript is still a new analysis entry, never an edit to the dialog.
 - Writes: one `analysis` entry with `type: "transcript"`, `dialog` pointing at the source index, `vendor`, and the transcript in `body`. Speaker labels and word or segment timing go inside that body, in the vendor's format. Covered by the `transcription` grant.
 - Never needs: party names, `tel`, the lawful basis body, other analysis. Writes nothing into `parties` or `dialog`.
 
@@ -86,12 +86,12 @@ The file is Priya Raman's call, `kit/network/priya-raman-2026-03-10.vcon.json`. 
 - Never needs: the card number at `dialog[5]` or the SSN digits at `dialog[7]`. A redacted copy serves.
 
 ### CRM
-- Reads: `parties[0].name` and `tel`, the summary, and the lawful basis grants.
+- Reads: `parties[0].name` and `tel`, the summary once the Summarizer has written it (`analysis` starts empty), and the lawful basis grants.
 - Writes: nothing required in the vCon. It may add a `tags` attachment.
 - Never needs: raw dialog, the card number, the SSN digits. `marketing` is refused, so no card offers.
 
 ### Callback agent
-- Reads: `parties[0].tel`, the summary, and the `customer_callback` grant with its condition "phone only, no email", backed by `dialog[13]`.
+- Reads: `parties[0].tel`, the summary once written (until then, `dialog[8]` to `dialog[12]`), and the `customer_callback` grant with its condition "phone only, no email", backed by `dialog[13]`.
 - Writes: the callback is a new conversation and gets its own vCon.
 - Never needs: the card number, the SSN digits, any email address. There is none in the file, and Priya refused email.
 
