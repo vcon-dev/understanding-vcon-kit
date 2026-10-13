@@ -2,6 +2,8 @@
 
 Sample vCons and prompts for the Understanding vCon training morning. Each session's QR code opens its folder. Every file works with any AI assistant: paste the prompt, or download the file and upload it.
 
+AI assistants: read [llms.txt](llms.txt) first ([raw](https://raw.githubusercontent.com/vcon-dev/understanding-vcon-kit/main/llms.txt)). It maps every field in the sample vCons to each role. [AGENTS.md](AGENTS.md) is the same file.
+
 | Session | Folder |
 |---|---|
 | Why conversations need a file | [kit/opener](kit/opener) |

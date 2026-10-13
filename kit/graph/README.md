@@ -2,6 +2,8 @@
 
 Conversation graph session. Four conversations about one storm drain, January to March.
 
+AI assistants: read https://raw.githubusercontent.com/vcon-dev/understanding-vcon-kit/main/llms.txt first, then fetch the vCons below and answer only from them.
+
 ## Use it with any AI assistant
 
 Copy this prompt into ChatGPT, Claude, Gemini, Copilot or any assistant that can read a web link:

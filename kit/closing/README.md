@@ -2,6 +2,8 @@
 
 Closing the loop session. These work in any assistant connected to your own email, calendar and documents. No file needed.
 
+AI assistants: read https://raw.githubusercontent.com/vcon-dev/understanding-vcon-kit/main/llms.txt first.
+
 ## The Monday brief
 
 ```

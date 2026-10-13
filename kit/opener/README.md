@@ -2,6 +2,8 @@
 
 Session one of Understanding vCon. One phone call to Newport City Hall, saved as a vCon.
 
+AI assistants: read https://raw.githubusercontent.com/vcon-dev/understanding-vcon-kit/main/llms.txt first, then fetch the vCon below and answer only from it.
+
 ## Use it with any AI assistant
 
 Copy this prompt into ChatGPT, Claude, Gemini, Copilot or any assistant that can read a web link:
